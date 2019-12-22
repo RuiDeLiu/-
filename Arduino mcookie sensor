@@ -1,0 +1,63 @@
+#define SSID “Silly Boy”
+#define PASSWORD “zrs666666”
+#define DEVICEID “575386838”
+String apiKey = “0eGMaXEIjHG7CDAW7qCS=fYb6Gg=”;
+
+#define HOST_NAME “api.heclouds.com”
+#define HOST_PORT (80)
+#define INTERVAL_SENSOR 5000
+#define INTERVAL_NET 5000
+//传感器部分
+#include <Wire.h>
+#include <ESP8266.h>
+#include <I2Cdev.h>
+/*******温湿度*******/
+#include <Microduino_SHT2x.h>
+
+//WEBSITE
+char buf[10];
+
+#define INTERVAL_sensor 2000
+unsigned long sensorlastTime = millis();
+
+float tempOLED, humiOLED;
+
+#define INTERVAL_OLED 1000
+
+String mCottenData;
+String jsonToSend;
+float sensor_tem, sensor_hum; //传感器温度、湿度
+char sensor_tem_c[7], sensor_hum_c[7]; //换成char数组传输
+#include <SoftwareSerial.h>
+#define EspSerial mySerial
+#define UARTSPEED 9600
+SoftwareSerial mySerial(2, 3); /* RX:D3, TX:D2 */
+ESP8266 wifi(&EspSerial);
+//ESP8266 wifi(Serial1);
+unsigned long net_time1 = millis();
+unsigned long sensor_time = millis();
+
+//int SensorData;
+String postString;
+//String jsonToSend;
+
+Tem_Hum_S2 TempMonitor;
+
+void setup(void)
+{
+Wire.begin();
+Serial.begin(115200);
+while (!Serial);
+Serial.print(F(“setup begin\r\n”));
+delay(100);
+
+WifiInit(EspSerial, UARTSPEED);
+
+Serial.print(F(“FW Version:”));
+Serial.println(wifi.getVersion().c_str());
+
+if (wifi.setOprToStationSoftAP()) {
+Serial.print(F(“to station + softap ok\r\n”));
+} else {
+Serial.print(F(“to station + softap err\r\n”));
+}
